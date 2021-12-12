@@ -20,7 +20,7 @@ class YOLO(object):
         "classes_path": 'model_data/mask_classes.txt',
         "model_image_size" : (608, 608, 3),
         "confidence": 0.5,
-        "cuda": True
+        "cuda": torch.cuda.is_available()
     }
 
     @classmethod
@@ -69,7 +69,10 @@ class YOLO(object):
         print('Loading pretrained weights.')
         
         model_dict = self.net.state_dict()
-        pretrained_dict = torch.load(self.model_path)
+        if(self.cuda):
+            pretrained_dict = torch.load(self.model_path)
+        else:
+            pretrained_dict = torch.load(self.model_path,map_location='cpu')
         pretrained_dict = {k: v for k, v in pretrained_dict.items() if np.shape(model_dict[k]) ==  np.shape(v)}
         model_dict.update(pretrained_dict)
         self.net.load_state_dict(model_dict)
