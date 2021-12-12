@@ -15,7 +15,7 @@ from utils.utils import non_max_suppression, bbox_iou, DecodeBox, letterbox_imag
 
 class YOLO(object):
     _defaults = {
-        "model_path": 'model_data/yolov4_maskdetect_weights1.pth',
+        "model_path": 'data/model/yolov4_maskdetect_weights1.pth',
         "anchors_path": 'model_data/yolo_anchors.txt',
         "classes_path": 'model_data/mask_classes.txt',
         "model_image_size" : (608, 608, 3),
@@ -62,6 +62,7 @@ class YOLO(object):
     #   获得所有的分类
     #---------------------------------------------------#
     def generate(self):
+        print('CUDA:',self.cuda)
         
         self.net = YoloBody(len(self.anchors[0]), len(self.class_names)).eval()
 
