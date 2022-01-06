@@ -10,8 +10,15 @@ from torch.autograd import Variable
 import torch.backends.cudnn as cudnn
 from nets.yolo4 import YoloBody
 from nets.yolo_training import YOLOLoss, Generator
+from tqdm.std import tqdm
+import yaml
 
 
+f = open('config/setting.yaml', encoding='utf-8')
+param=yaml.safe_load(f)
+
+train_param=param['train']
+print(param)
 #---------------------------------------------------#
 #   获得类和先验框
 #---------------------------------------------------#
@@ -73,7 +80,7 @@ def fit_one_epoch(net, yolo_losses, epoch, epoch_size, epoch_size_val, gen,genva
     print('Start Validation.')
     net.eval()
     for iteration in range(epoch_size_val):
-        images_val, targets_val = next(genval)
+        images_val, targets _val = next(genval)
 
         with torch.no_grad():
             if cuda:
@@ -110,8 +117,8 @@ input_shape = (608, 608)
 #-------------------------------#
 Cosine_lr = True
 mosaic = True
-# 用于设定是否使用cuda
-Cuda = True
+
+Cuda = True  # 用于设定是否使用cuda
 smoooth_label = 0.03
 
 #-------------------------------#
@@ -169,8 +176,9 @@ num_val = len(val_lines)
 #------------------------------------#
 lr = 1e-3
 Batch_size = 4
-Init_Epoch = 0
-Freeze_Epoch = 25
+# Batch_size = 4
+Init_Epoch = train_param["Init_Epoch"]
+Freeze_Epoch = train_param["Freeze_Epoch"]    
         
 optimizer = optim.Adam(net.parameters(), lr, weight_decay=5e-4)
 if Cosine_lr:
@@ -188,7 +196,7 @@ for param in model.backbone.parameters():
 
 best_loss = 99999999.0
 best_model_weights = copy.deepcopy(net.state_dict())
-for epoch in range(Init_Epoch, Freeze_Epoch):
+for epoch in tqdm(range(Init_Epoch, Freeze_Epoch)):
     total_loss, val_loss = fit_one_epoch(net, yolo_losses, epoch, epoch_size, epoch_size_val, gen, gen_val, 
                                          Freeze_Epoch, Cuda, optimizer, lr_scheduler)
     if total_loss < best_loss:
@@ -198,7 +206,8 @@ for epoch in range(Init_Epoch, Freeze_Epoch):
         total_loss_file.write(str(total_loss.item()) + '\n')
     #with open('val_loss.csv', mode='a+') as val_loss_file:
     #    val_loss_file.write(str(val_loss.item()) + '\n')
-torch.save(best_model_weights, 'model_data/yolov4_maskdetect_weights0.pth')
+ctime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+torch.save(best_model_weights, 'data/train/yolov4_maskdetect_weights_'+ctime+'_0.pth')
 
 
 #------------------------------------#
@@ -206,8 +215,9 @@ torch.save(best_model_weights, 'model_data/yolov4_maskdetect_weights0.pth')
 #------------------------------------#
 lr = 1e-4
 Batch_size = 2
-Freeze_Epoch = 25
-Unfreeze_Epoch = 50
+# Batch_size = 2
+Freeze_Epoch = train_param['Freeze_Epoch']
+Unfreeze_Epoch = train_param['Unfreeze_Epoch']
 
 optimizer = optim.Adam(net.parameters(), lr, weight_decay=5e-4)
 if Cosine_lr:
@@ -223,7 +233,7 @@ epoch_size_val = num_val//Batch_size
 for param in model.backbone.parameters():
     param.requires_grad = True
 
-for epoch in range(Freeze_Epoch, Unfreeze_Epoch):
+for epoch in tqdm(range(Freeze_Epoch, Unfreeze_Epoch)):
     total_loss, val_loss = fit_one_epoch(net, yolo_losses, epoch, epoch_size, epoch_size_val, gen, gen_val, 
                                          Unfreeze_Epoch, Cuda, optimizer, lr_scheduler)
     if total_loss < best_loss:
@@ -233,5 +243,5 @@ for epoch in range(Freeze_Epoch, Unfreeze_Epoch):
         total_loss_file.write(str(total_loss.item()) + '\n')
     #with open('val_loss.csv', mode='a+') as val_loss_file:
     #    val_loss_file.write(str(val_loss.item() + '\n')
-ctime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-torch.save(best_model_weights, 'model_data/yolov4_maskdetect_weights'+'_ctime'+'.pth')
+
+torch.save(best_model_weights, 'data/train/yolov4_maskdetect_weights_'+ctime+'_1.pth')

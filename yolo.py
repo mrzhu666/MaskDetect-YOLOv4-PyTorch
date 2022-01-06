@@ -12,8 +12,12 @@ import torch.backends.cudnn as cudnn
 from PIL import Image, ImageFont, ImageDraw
 from torch.autograd import Variable
 from utils.utils import non_max_suppression, bbox_iou, DecodeBox, letterbox_image, yolo_correct_boxes
+import yaml
+
+
 
 class YOLO(object):
+    """专门用于测试的类，内嵌Yolobody"""    
     _defaults = {
         "model_path": 'data/model/yolov4_maskdetect_weights1.pth',
         "anchors_path": 'model_data/yolo_anchors.txt',
@@ -35,6 +39,7 @@ class YOLO(object):
     #---------------------------------------------------#
     def __init__(self, **kwargs):
         self.__dict__.update(self._defaults)
+        self.__dict__.update(kwargs)
         self.class_names = self._get_class()
         self.anchors = self._get_anchors()
         self.generate()

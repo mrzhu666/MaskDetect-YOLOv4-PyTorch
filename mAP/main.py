@@ -9,7 +9,8 @@ import math
 
 import numpy as np
 
-MINOVERLAP = 0.5 # default value (defined in the PASCAL VOC2012 challenge)
+# IoU阈值？
+MINOVERLAP = 0.50 # default value (defined in the PASCAL VOC2012 challenge)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-na', '--no-animation', help="no animation is shown.", action="store_true")
@@ -46,7 +47,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 GT_PATH = os.path.join(os.getcwd(), 'input', 'ground-truth')
 DR_PATH = os.path.join(os.getcwd(), 'input', 'detection-results')
-# if there are no images then no animation can be shown
+# if there are no images then no animation can be shown.动画绘制？
 IMG_PATH = os.path.join(os.getcwd(), 'input', 'images-optional')
 if os.path.exists(IMG_PATH): 
     for dirpath, dirnames, files in os.walk(IMG_PATH):
@@ -664,7 +665,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
             cumsum += val
         #print(tp)
         rec = tp[:]
-        for idx, val in enumerate(tp):
+        for idx, val in enumerate(tp): 
             rec[idx] = float(tp[idx]) / gt_counter_per_class[class_name]
         #print(rec)
         prec = tp[:]

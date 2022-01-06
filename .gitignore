@@ -6,3 +6,4 @@ data
 datasets
 mAP/input
 mAP/output
+**/.temp_files/**

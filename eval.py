@@ -6,18 +6,27 @@ import numpy as np
 import torch.nn as nn
 from torch.autograd import Variable
 import torch.backends.cudnn as cudnn
+from tqdm.std import tqdm
 from yolo import YOLO
 from nets.yolo4 import YoloBody
 import xml.etree.ElementTree as ET
 from PIL import Image, ImageFont, ImageDraw
 from utils.utils import non_max_suppression, bbox_iou, DecodeBox,letterbox_image,yolo_correct_boxes
+import yaml
 
+f = open('config/setting.yaml', encoding='utf-8')
+param=yaml.safe_load(f)
+val_param=param['val']
+
+
+# 测试集和训练过程中的测试一致
+# 生成文件再mAP/input mAP/output
 
 # ground-truth annotations path
-annotation_path = '../../data/MaskDatasets/val/Annotations'
+annotation_path = param['val']['annotation_path']
 annotations = sorted(os.listdir(annotation_path))
 # test images path
-image_path = '../../data/MaskDatasets/val/JPEGImages'
+image_path = param['val']['image_path']
 images = sorted(os.listdir(image_path))
 
 # making ground-truth
@@ -41,6 +50,9 @@ class mAP_Yolo(YOLO):
     #---------------------------------------------------#
     #   检测图片
     #---------------------------------------------------#
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def detect_image(self, image_id, image):
         self.confidence = 0.05
         image_shape = np.array(np.shape(image)[0:2])
@@ -92,9 +104,9 @@ class mAP_Yolo(YOLO):
     
 
 print('Start making detection results!')
-yolo = mAP_Yolo()
-for image in images:
+yolo = mAP_Yolo(model_path=val_param["model_path"])
+for image in tqdm(images): 
     img = Image.open(os.path.join(image_path, image))
     yolo.detect_image(image.split('.')[0], img)
-    print('[done] ' + image)
+    # print('[done] ' + image)
 print('Finish making detection results!')

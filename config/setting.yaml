@@ -1,0 +1,9 @@
+train:
+  Init_Epoch: 0
+  Freeze_Epoch: 25
+  Unfreeze_Epoch: 50
+
+val:
+  model_path: /mnt/sdb2/.RECYCLE.BIN/code/MaskDetect-YOLOv4-PyTorch/data/model/yolov4_maskdetect_weights1.pth
+  annotation_path: /mnt/sdb1/student/mrzhu/data/MaskDatasets/val/Annotations
+  image_path: /mnt/sdb1/student/mrzhu/data/MaskDatasets/val/JPEGImages

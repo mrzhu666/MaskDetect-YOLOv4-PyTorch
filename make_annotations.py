@@ -3,13 +3,15 @@ import xml.etree.ElementTree as ET
 
 
 
+# 读取xml的标注数据，存储到model_data中
+
 # common parameters
 class_index = ('mask', 'nomask')
 
 
 # train dataset parameters
-images_path = 'datasets/train/JPEGImages'
-annotations_path = 'datasets/train/Annotations'
+images_path = '../../data/MaskDatasets/train/JPEGImages'
+annotations_path = '../../data/MaskDatasets/train/Annotations'
 # get train dataset list
 images = sorted(os.listdir(images_path))
 annotations = sorted(os.listdir(annotations_path))
@@ -36,8 +38,8 @@ with open('model_data/mask_train.txt', 'w+') as f:
 
 
 # train dataset parameters
-images_path = 'datasets/val/JPEGImages'
-annotations_path = 'datasets/val/Annotations'
+images_path = '../../data/MaskDatasets/val/JPEGImages'
+annotations_path = '../../data/MaskDatasets/val/Annotations'
 # get train dataset list
 images = sorted(os.listdir(images_path))
 annotations = sorted(os.listdir(annotations_path))

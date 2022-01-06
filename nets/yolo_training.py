@@ -291,7 +291,7 @@ class Generator(object):
         self.image_size = image_size
         
     def get_random_data(self, annotation_line, input_shape, jitter=.3, hue=.1, sat=1.5, val=1.5):
-        '''r实时数据增强的随机预处理'''
+        '''实时数据增强的随机预处理'''
         line = annotation_line.split()
         image = Image.open(line[0])
         iw, ih = image.size
@@ -358,7 +358,10 @@ class Generator(object):
             return image_data, []
 
     def get_random_data_with_Mosaic(self, annotation_line, input_shape, hue=.1, sat=1.5, val=1.5):
-        '''random preprocessing for real-time data augmentation'''
+        '''random preprocessing for real-time data augmentation
+        
+        数据偏低
+        '''
         h, w = input_shape
         min_offset_x = 0.4
         min_offset_y = 0.4
@@ -462,6 +465,20 @@ class Generator(object):
             return new_image, []
 
     def generate(self, train = True, mosaic = True):
+        """[]
+
+        Parameters
+        ----------
+        train : bool, optional
+            是否训练时的数据, by default True
+        mosaic : bool, optional
+            [description], by default True
+
+        Yields
+        -------
+        [type]
+            [description]
+        """        
         while True:
             shuffle(self.train_lines)
             lines = self.train_lines
