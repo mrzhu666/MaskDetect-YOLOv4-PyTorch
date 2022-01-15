@@ -3,21 +3,24 @@ import time
 import numpy as np
 from yolo import YOLO
 from PIL import Image
-
+from setting import config
 
 def main():
-    image_path='./data/val_271.jpg'
-
+    image_path='./data/'
+    file='val_359.jpg'
     print('Start detect!')
     yolo = YOLO()
     try:
-        image = Image.open(image_path)
+        image = Image.open(image_path+file)
     except:
         print('Open Error! Try again!')
         pass
     else:
         r_image = yolo.detect_image(image)
-        r_image.save(image_path.split('.')[0] + '_result.png')
+        file_result=file.split('.')
+        file_result[0]+='_result'
+        
+        r_image.save(image_path+'.'.join(file_result))
     print('Finish detect!')
 
 
